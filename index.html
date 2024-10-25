@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Diabetes Prediction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: url('https://thewellproject.org/sites/default//files/article_images/diabetes.jpg') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px 40px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            color: #555;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #218838;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 18px;
+        }
+        .positive {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .negative {
+            background-color: #d4edda;
+            color: #155724;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Diabetes Prediction Form</h1>
+        <h2>Diabetes Risk Prediction</h2>
+        <form id="prediction-form">
+            <label for="Pregnancies">Pregnancies:</label>
+            <input type="number" id="Pregnancies" name="Pregnancies" required><br>
+
+            <label for="Glucose">Glucose:</label>
+            <input type="number" id="Glucose" name="Glucose" step="any" required><br>
+
+            <label for="BloodPressure">Blood Pressure:</label>
+            <input type="number" id="BloodPressure" name="BloodPressure" step="any" required><br>
+
+            <label for="SkinThickness">Skin Thickness:</label>
+            <input type="number" id="SkinThickness" name="SkinThickness" step="any" required><br>
+
+            <label for="Insulin">Insulin:</label>
+            <input type="number" id="Insulin" name="Insulin" step="any" required><br>
+
+            <label for="BMI">BMI:</label>
+            <input type="number" id="BMI" name="BMI" step="any" required><br>
+
+            <label for="DiabetesPedigreeFunction">Diabetes Pedigree Function:</label>
+            <input type="number" id="DiabetesPedigreeFunction" name="DiabetesPedigreeFunction" step="any" required><br>
+
+            <label for="Age">Age:</label>
+            <input type="number" id="Age" name="Age" required><br>
+
+            <input type="submit" value="Predict">
+        </form>
+
+        <div class="result" id="result" style="display: none;"></div>
+    </div>
+
+    <script>
+        function displayResult(result, probability) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.style.display = 'block';
+            resultDiv.textContent = `The model predicts that the person is ${result} with a probability of ${probability}.`;
+            resultDiv.classList.remove('positive', 'negative');
+            if (result === 'Diabetic') {
+                resultDiv.classList.add('positive');
+            } else {
+                resultDiv.classList.add('negative');
+            }
+        }
+
+        // This script will be executed when the form is submitted
+        document.getElementById('prediction-form').addEventListener('submit', function (event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            fetch('/predict', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                displayResult(data.result, data.probability);
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>
